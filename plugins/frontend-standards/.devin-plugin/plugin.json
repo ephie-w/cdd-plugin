@@ -1,0 +1,8 @@
+{
+  "name": "frontend-standards",
+  "version": "0.1.0",
+  "description": "Frontend standards: React and Next.js best-practice rules plus a design-review skill",
+  "author": { "name": "Your Org", "email": "plugins@example.com" },
+  "license": "MIT",
+  "keywords": ["devin", "plugin", "frontend", "react", "nextjs", "design"]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "team-starter-pack",
+  "version": "0.1.0",
+  "description": "Meta-plugin: installing this pulls in the team's baseline plugin set and defines the allow/deny policy",
+  "author": { "name": "Cognition", "email": "plugins@cognition.ai" },
+  "license": "MIT",
+  "keywords": ["devin", "plugin", "meta", "governance"],
+
+  "requiredPlugins": [
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/CognitionAI/team-marketplace-template.git",
+      "path": "plugins/engineering-baseline"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/CognitionAI/team-marketplace-template.git",
+      "path": "plugins/security-guardrails"
+    }
+  ],
+
+  "optionalPlugins": [
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/CognitionAI/team-marketplace-template.git",
+      "path": "plugins/frontend-standards"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/CognitionAI/team-marketplace-template.git",
+      "path": "plugins/docs-and-release"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/anthropics/claude-code.git",
+      "path": "plugins/frontend-design"
+    }
+  ],
+
+  "forbiddenPlugins": [
+    "example-org/deprecated-legacy-tools",
+    "untrusted-vendor/*"
+  ]
+}

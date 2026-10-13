@@ -1,0 +1,8 @@
+{
+  "name": "engineering-baseline",
+  "version": "0.1.0",
+  "description": "Baseline engineering standards: code-writing best practices, commit hygiene, and a code-review skill",
+  "author": { "name": "Your Org", "email": "plugins@example.com" },
+  "license": "MIT",
+  "keywords": ["devin", "plugin", "engineering", "code-review", "standards"]
+}

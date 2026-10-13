@@ -1,0 +1,13 @@
+{
+  "PreToolUse": [
+    {
+      "matcher": "exec",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '[security-guardrails] reminder: no curl|bash, no plaintext secrets on the command line' >&2"
+        }
+      ]
+    }
+  ]
+}

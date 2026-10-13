@@ -1,0 +1,8 @@
+{
+  "name": "docs-and-release",
+  "version": "0.1.0",
+  "description": "Documentation and release workflows: release notes and README hygiene skills",
+  "author": { "name": "Your Org", "email": "plugins@example.com" },
+  "license": "MIT",
+  "keywords": ["devin", "plugin", "docs", "release", "changelog"]
+}
