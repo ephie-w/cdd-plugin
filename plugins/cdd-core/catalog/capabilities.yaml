@@ -1,0 +1,50 @@
+schema_version: '1.0'
+demo_snapshot: true
+source_note: Selected records copied from the AI Engineering CDD Registry for this isolated demo.
+patterns:
+  - id: BLUEPRINT-01
+    name: RAG application
+    summary: Starting architecture for traceable assistants over enterprise documents and records.
+    status: draft
+    use_when:
+      - Answers must be grounded in approved enterprise content with citations.
+    do_not_use_when:
+      - The task does not require retrieval or source grounding.
+    components:
+      optional:
+        - shared-metadata-enrichment-api
+        - shared-braintrust-otel-pipeline
+    known_gaps:
+      - No approved multi-format document ingestion Component is registered.
+      - No approved permission-aware retrieval Component is registered.
+      - No approved Shared RAG Foundation Component is registered.
+components:
+  - id: shared-metadata-enrichment-api
+    name: Shared Metadata Enrichment API
+    summary: Shared Cloud Run HTTP service that enriches documents with configured metadata.
+    status: candidate
+    category: data
+    plugin:
+      name: cdd-metadata-enrichment
+      marketplace_path: plugins/cdd-metadata-enrichment
+      skill: assess-metadata-enrichment
+      local_agent: metadata-fit-reviewer
+    use_when:
+      - A project needs reusable structural, semantic, temporal, business, or source metadata before indexing.
+    do_not_use_when:
+      - The Metadata team has not deployed the project's configuration.
+  - id: shared-braintrust-otel-pipeline
+    name: Shared Braintrust OTel Pipeline
+    summary: Shared OTLP/HTTP Collector path that routes AI traces to project-specific Braintrust projects.
+    status: candidate
+    category: observe
+    plugin:
+      name: cdd-braintrust-otel
+      marketplace_path: plugins/cdd-braintrust-otel
+      skill: assess-tracing
+      local_agent: tracing-fit-reviewer
+    use_when:
+      - An AI service needs traces routed to an approved Braintrust project.
+    do_not_use_when:
+      - The service needs OTel Metrics; the current shared path supports traces only.
+      - The service has not received a Braintrust routing project identifier.

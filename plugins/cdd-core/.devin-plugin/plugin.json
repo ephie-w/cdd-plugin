@@ -1,0 +1,6 @@
+{
+  "name": "cdd-core",
+  "version": "0.1.0",
+  "description": "Discover CDD patterns and reusable components from business requirements.",
+  "keywords": ["CDD", "capability discovery", "architecture"]
+}
