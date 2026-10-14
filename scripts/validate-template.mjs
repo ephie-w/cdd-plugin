@@ -11,6 +11,10 @@ const pluginsDir = join(root, "plugins");
 
 const errors = [];
 const kebab = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const sameRepoUrls = new Set([
+  "https://github.com/CognitionAI/team-marketplace-template.git",
+  "https://example.invalid/cdd-marketplace.git",
+]);
 
 function fail(msg) {
   errors.push(msg);
@@ -22,6 +26,25 @@ function parseJson(path, label) {
   } catch (e) {
     fail(`${label}: invalid JSON (${e.message})`);
     return null;
+  }
+}
+
+function checkRefs(manifest, label) {
+  for (const list of ["requiredPlugins", "optionalPlugins"]) {
+    for (const ref of Array.isArray(manifest[list]) ? manifest[list] : []) {
+      if (typeof ref === "string" && ref.startsWith("./")) {
+        fail(`${label}: ${list} relative plugin reference "${ref}" is unsupported`);
+        continue;
+      }
+      if (ref?.source !== "git-subdir" || !sameRepoUrls.has(ref.url)) continue;
+      if (
+        typeof ref.path !== "string" ||
+        !/^plugins\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(ref.path) ||
+        !existsSync(join(root, ref.path, ".devin-plugin", "plugin.json"))
+      ) {
+        fail(`${label}: ${list} entry "${ref.path}" does not resolve to a plugin in this repo`);
+      }
+    }
   }
 }
 
@@ -58,6 +81,9 @@ function checkSkillLike(dir, kind) {
   }
 }
 
+const rootManifest = parseJson(join(root, ".devin-plugin", "plugin.json"), ".devin-plugin/plugin.json");
+if (rootManifest) checkRefs(rootManifest, ".devin-plugin/plugin.json");
+
 if (!existsSync(pluginsDir)) {
   fail("plugins/ directory not found");
 } else {
@@ -90,23 +116,7 @@ if (!existsSync(pluginsDir)) {
       if (manifest[list] !== undefined && !Array.isArray(manifest[list]))
         fail(`${label}: "${list}" must be an array`);
     }
-    // Same-repo git-subdir references must point at real sibling plugins.
-    for (const list of ["requiredPlugins", "optionalPlugins"]) {
-      for (const ref of Array.isArray(manifest[list]) ? manifest[list] : []) {
-        if (
-          typeof ref === "object" &&
-          ref !== null &&
-          ref.source === "git-subdir" &&
-          typeof ref.url === "string" &&
-          /\/team-marketplace-template(\.git)?$/.test(ref.url) &&
-          typeof ref.path === "string"
-        ) {
-          const target = join(root, ref.path, ".devin-plugin", "plugin.json");
-          if (!existsSync(target))
-            fail(`${label}: ${list} entry "${ref.path}" does not resolve to a plugin in this repo`);
-        }
-      }
-    }
+    checkRefs(manifest, label);
 
     checkSkillLike(join(dir, "skills"), "skill");
     checkSkillLike(join(dir, "agents"), "agent");

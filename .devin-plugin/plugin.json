@@ -16,6 +16,11 @@
       "source": "git-subdir",
       "url": "https://github.com/CognitionAI/team-marketplace-template.git",
       "path": "plugins/security-guardrails"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://example.invalid/cdd-marketplace.git",
+      "path": "plugins/cdd-core"
     }
   ],
 
@@ -34,6 +39,16 @@
       "source": "git-subdir",
       "url": "https://github.com/anthropics/claude-code.git",
       "path": "plugins/frontend-design"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://example.invalid/cdd-marketplace.git",
+      "path": "plugins/cdd-metadata-enrichment"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://example.invalid/cdd-marketplace.git",
+      "path": "plugins/cdd-braintrust-otel"
     }
   ],
 
