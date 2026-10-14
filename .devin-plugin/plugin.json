@@ -19,8 +19,9 @@
     },
     {
       "source": "git-subdir",
-      "url": "https://example.invalid/cdd-marketplace.git",
-      "path": "plugins/cdd-core"
+      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "path": "plugins/cdd-core",
+      "ref": "codex/cdd-marketplace-import"
     }
   ],
 
@@ -42,13 +43,15 @@
     },
     {
       "source": "git-subdir",
-      "url": "https://example.invalid/cdd-marketplace.git",
-      "path": "plugins/cdd-metadata-enrichment"
+      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "path": "plugins/cdd-metadata-enrichment",
+      "ref": "codex/cdd-marketplace-import"
     },
     {
       "source": "git-subdir",
-      "url": "https://example.invalid/cdd-marketplace.git",
-      "path": "plugins/cdd-braintrust-otel"
+      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "path": "plugins/cdd-braintrust-otel",
+      "ref": "codex/cdd-marketplace-import"
     }
   ],
 

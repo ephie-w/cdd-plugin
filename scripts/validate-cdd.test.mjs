@@ -9,7 +9,8 @@ import { spawnSync } from 'node:child_process';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const json = (path) => JSON.parse(read(path));
-const placeholder = 'https://example.invalid/cdd-marketplace.git';
+const registryUrl = 'https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git';
+const registryRef = 'codex/cdd-marketplace-import';
 
 test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.equal(json('plugins/cdd-core/.devin-plugin/plugin.json').name, 'cdd-core');
@@ -54,9 +55,9 @@ test('component advice remains candidate-only and trace-only where relevant', ()
   assert.match(tracing, /do not connect to Braintrust/i);
 });
 
-test('root manifest wires core required and components optional via git-subdir', () => {
+test('root manifest wires CDD plugins to the requested repository branch', () => {
   const rootManifest = json('.devin-plugin/plugin.json');
-  const has = (list, path) => list.some((ref) => ref?.source === 'git-subdir' && ref.url === placeholder && ref.path === path);
+  const has = (list, path) => list.some((ref) => ref?.source === 'git-subdir' && ref.url === registryUrl && ref.path === path && ref.ref === registryRef);
   assert.ok(has(rootManifest.requiredPlugins, 'plugins/cdd-core'));
   assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-metadata-enrichment'));
   assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-braintrust-otel'));
@@ -75,7 +76,7 @@ test('validator rejects a missing same-repo plugin path', () => {
     writeFileSync(join(fixture, 'plugins', 'example', '.devin-plugin', 'plugin.json'), '{"name":"example"}');
     writeFileSync(join(fixture, '.devin-plugin', 'plugin.json'), JSON.stringify({
       name: 'fixture',
-      requiredPlugins: [{ source: 'git-subdir', url: placeholder, path: 'plugins/missing' }],
+      requiredPlugins: [{ source: 'git-subdir', url: registryUrl, ref: registryRef, path: 'plugins/missing' }],
     }));
     const result = spawnSync(process.execPath, [join(fixture, 'scripts', 'validate-template.mjs')], { encoding: 'utf8' });
     assert.notEqual(result.status, 0);
@@ -104,11 +105,13 @@ test('validator rejects uploaded-bundle-style relative references', () => {
   }
 });
 
-test('README explains the deliberate root-install blocker', () => {
+test('README explains that the new branch must be pushed before root installation', () => {
   const guide = read('README.md');
   for (const name of ['cdd-core', 'cdd-metadata-enrichment', 'cdd-braintrust-otel']) {
     assert.match(guide, new RegExp(name));
   }
-  assert.match(guide, /example\.invalid/);
-  assert.match(guide, /root installation cannot resolve/i);
+  assert.match(guide, /nca-ai-engineering-cdd-registry/);
+  assert.match(guide, /codex\/cdd-marketplace-import/);
+  assert.match(guide, /push.*before.*install/i);
+  assert.doesNotMatch(guide, /example\.invalid/);
 });

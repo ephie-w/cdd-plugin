@@ -23,7 +23,7 @@ This template includes:
 
 ## How distribution works
 
-1. Fork this repo into your org and update the `git-subdir` URLs in [`.devin-plugin/plugin.json`](.devin-plugin/plugin.json) to point at your fork. The three new CDD entries intentionally use `https://example.invalid/cdd-marketplace.git` as a placeholder.
+1. The three CDD `git-subdir` entries in [`.devin-plugin/plugin.json`](.devin-plugin/plugin.json) point to `https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git` at `ref: codex/cdd-marketplace-import`. Push that branch to the target repository before attempting a root installation. The retained example-plugin entries still point to Cognition's template repository.
 2. Customize the plugins under `plugins/` and the root manifest.
 3. Distribute from Settings → Marketplace in the Devin web app: an admin adds one required entry to the enterprise/account (or org) managed manifest — the meta-plugin:
 
@@ -32,17 +32,18 @@ This template includes:
      "requiredPlugins": [
        {
          "source": "github",
-         "repo": "<your-org>/team-marketplace-template"
+         "repo": "newscorp-ghfb/nca-ai-engineering-cdd-registry",
+         "ref": "codex/cdd-marketplace-import"
        }
      ]
    }
    ```
 
-   Once the URLs are real, required plugins install recursively, so requiring `team-starter-pack` pulls in `engineering-baseline`, `security-guardrails`, and `cdd-core`. Individual users can additionally install endorsed optional plugins, including the two CDD components. An `optionalPlugins` entry is not an installation.
+   Once the branch is pushed, required plugins install recursively, so requiring `team-starter-pack` pulls in `engineering-baseline`, `security-guardrails`, and `cdd-core`. Individual users can additionally install endorsed optional plugins, including the two CDD components. An `optionalPlugins` entry is not an installation.
 
-4. After configuring resolvable URLs, everyone in scope gets required plugins automatically — cloud sessions, and CLI/Desktop users logged into the account.
+4. After publishing the referenced branch and configuring the managed manifest, everyone in scope gets required plugins automatically — cloud sessions, and CLI/Desktop users logged into the account.
 
-**Deployment blocker:** root installation cannot resolve `https://example.invalid/cdd-marketplace.git`. Replace that placeholder with a real repository URL before installing or distributing the root meta-plugin. The CDD content is an assessment-only demo: its RAG pattern is `draft`, its components are `candidate`, and no MCP connection or service integration is configured.
+**Deployment blocker:** the target repository does not yet have the `codex/cdd-marketplace-import` branch. Push this branch before installing or distributing the root meta-plugin; its current `main` branch does not contain these plugin directories. The CDD content is an assessment-only demo: its RAG pattern is `draft`, its components are `candidate`, and no MCP connection or service integration is configured.
 
 ## Cloud vs. CLI Support
 
@@ -58,7 +59,7 @@ devin plugins install --local ./plugins/cdd-braintrust-otel
 devin plugins list
 ```
 
-Install only the optional components needed for a request. Core discovery identifies a candidate; its skill checks installation before invoking that component's assessment skill. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin is not locally installable as a complete bundle until the URL placeholder is replaced.
+Install only the optional components needed for a request. Core discovery identifies a candidate; its skill checks installation before invoking that component's assessment skill. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin cannot resolve its CDD dependencies until the referenced branch is pushed.
 
 ## Claude plugin compatibility
 
