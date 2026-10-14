@@ -29,3 +29,24 @@ test('discovery fails closed and does not treat optional plugins as installed', 
   assert.match(skill, /draft.*candidate.*not approved/i);
   assert.match(skill, /do not.*search/i);
 });
+
+test('component manifests and local agent profiles match flat names', () => {
+  for (const [plugin, skill, agent, category] of [
+    ['cdd-metadata-enrichment', 'assess-metadata-enrichment', 'metadata-fit-reviewer', 'data'],
+    ['cdd-braintrust-otel', 'assess-tracing', 'tracing-fit-reviewer', 'observe'],
+  ]) {
+    const manifest = json(`plugins/${plugin}/.devin-plugin/plugin.json`);
+    assert.equal(manifest.name, plugin);
+    assert.ok(manifest.keywords.includes(category));
+    assert.match(read(`plugins/${plugin}/skills/${skill}/SKILL.md`), new RegExp(`name: ${skill}`));
+    assert.match(read(`plugins/${plugin}/agents/${agent}/AGENT.md`), new RegExp(`name: ${agent}`));
+  }
+});
+
+test('component advice remains candidate-only and trace-only where relevant', () => {
+  assert.match(read('plugins/cdd-metadata-enrichment/skills/assess-metadata-enrichment/SKILL.md'), /candidate/);
+  const tracing = read('plugins/cdd-braintrust-otel/skills/assess-tracing/SKILL.md');
+  assert.match(tracing, /candidate/);
+  assert.match(tracing, /not OTel Metrics/);
+  assert.match(tracing, /do not connect to Braintrust/i);
+});

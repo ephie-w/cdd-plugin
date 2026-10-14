@@ -1,0 +1,6 @@
+{
+  "name": "cdd-metadata-enrichment",
+  "version": "0.1.0",
+  "description": "Assess fit for the candidate Shared Metadata Enrichment API.",
+  "keywords": ["CDD", "data", "metadata enrichment"]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "cdd-braintrust-otel",
+  "version": "0.1.0",
+  "description": "Assess fit for the candidate Shared Braintrust OTel trace pipeline.",
+  "keywords": ["CDD", "observe", "observability", "traces"]
+}
