@@ -1,16 +1,16 @@
-# Devin team marketplace template
+# AI Engineering CDD marketplace
 
-A template for running your own **governed plugin ecosystem** for [Devin](https://docs.devin.ai/cli/extensibility/plugins/overview): a single repo your org owns, containing the plugins your teams share, distributed to everyone from the Devin web app.
+A [Devin](https://docs.devin.ai/cli/extensibility/plugins/overview) meta-plugin for discovering reusable AI Engineering CDD patterns and candidate components, with independently installable component-assessment plugins.
 
-Fork it, add your own plugins, and wire it into your org or enterprise manifest. This branch retains the example plugins and adds a CDD discovery demo.
+This branch retains the original example plugins alongside the CDD discovery demo.
 
 > Plugins are in beta. The [CLI plugins reference](https://docs.devin.ai/cli/extensibility/plugins/overview) is the authoritative format. For a single-plugin authoring starter, see [CognitionAI/plugin-template](https://github.com/CognitionAI/plugin-template).
 
 ## What's inside
 
-This template includes:
+This marketplace includes:
 
-- A root meta-plugin (`team-starter-pack`) that governs what plugins are available to teams
+- A root meta-plugin (`cdd-marketplace`) that declares required discovery and baseline plugins plus optional component assessments
 - Example plugins that demonstrate different patterns:
   - Required baseline plugins (`engineering-baseline`, `security-guardrails`)
   - Optional plugins (`frontend-standards`, `docs-and-release`)
@@ -39,7 +39,7 @@ This template includes:
    }
    ```
 
-   Once the branch is pushed, required plugins install recursively, so requiring `team-starter-pack` pulls in `engineering-baseline`, `security-guardrails`, and `cdd-core`. Individual users can additionally install endorsed optional plugins, including the two CDD components. An `optionalPlugins` entry is not an installation.
+   Once the branch is pushed, required plugins install recursively, so requiring `cdd-marketplace` pulls in `engineering-baseline`, `security-guardrails`, and `cdd-core`. Individual users can additionally install endorsed optional plugins, including the two CDD components. An `optionalPlugins` entry is not an installation.
 
 4. After publishing the referenced branch and configuring the managed manifest, everyone in scope gets required plugins automatically — cloud sessions, and CLI/Desktop users logged into the account.
 

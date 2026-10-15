@@ -1,10 +1,10 @@
 {
-  "name": "team-starter-pack",
+  "name": "cdd-marketplace",
   "version": "0.1.0",
-  "description": "Meta-plugin: installing this pulls in the team's baseline plugin set and defines the allow/deny policy",
-  "author": { "name": "Cognition", "email": "plugins@cognition.ai" },
+  "description": "Meta-plugin for AI Engineering CDD discovery: installs core and baseline plugins and advertises optional component assessments.",
+  "author": { "name": "AI Engineering CDD Team" },
   "license": "MIT",
-  "keywords": ["devin", "plugin", "meta", "governance"],
+  "keywords": ["CDD", "capability discovery", "marketplace", "governance"],
 
   "requiredPlugins": [
     {

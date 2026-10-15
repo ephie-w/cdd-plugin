@@ -12,6 +12,15 @@ const json = (path) => JSON.parse(read(path));
 const registryUrl = 'https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git';
 const registryRef = 'codex/cdd-marketplace-import';
 
+test('root plugin declares the CDD marketplace identity', () => {
+  const manifest = json('.devin-plugin/plugin.json');
+  assert.equal(manifest.name, 'cdd-marketplace');
+  assert.equal(manifest.version, '0.1.0');
+  assert.match(manifest.description, /CDD discovery/i);
+  assert.deepEqual(manifest.author, { name: 'AI Engineering CDD Team' });
+  assert.equal(manifest.license, 'MIT');
+});
+
 test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.equal(json('plugins/cdd-core/.devin-plugin/plugin.json').name, 'cdd-core');
   const catalog = read('plugins/cdd-core/catalog/capabilities.yaml');
