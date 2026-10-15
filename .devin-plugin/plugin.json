@@ -19,7 +19,7 @@
     },
     {
       "source": "git-subdir",
-      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-core",
       "ref": "codex/cdd-marketplace-import"
     }
@@ -43,13 +43,13 @@
     },
     {
       "source": "git-subdir",
-      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-metadata-enrichment",
       "ref": "codex/cdd-marketplace-import"
     },
     {
       "source": "git-subdir",
-      "url": "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-braintrust-otel",
       "ref": "codex/cdd-marketplace-import"
     }

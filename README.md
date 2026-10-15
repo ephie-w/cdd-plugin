@@ -23,7 +23,7 @@ This marketplace includes:
 
 ## How distribution works
 
-1. The three CDD `git-subdir` entries in [`.devin-plugin/plugin.json`](.devin-plugin/plugin.json) point to `https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git` at `ref: codex/cdd-marketplace-import`. Push that branch to the target repository before attempting a root installation. The retained example-plugin entries still point to Cognition's template repository.
+1. The three CDD `git-subdir` entries in [`.devin-plugin/plugin.json`](.devin-plugin/plugin.json) point to `https://github.com/ephie-w/cdd-plugin.git` at `ref: codex/cdd-marketplace-import`. Push that branch to the target repository before attempting a root installation. The retained example-plugin entries still point to Cognition's template repository.
 2. Customize the plugins under `plugins/` and the root manifest.
 3. Distribute from Settings → Marketplace in the Devin web app: an admin adds one required entry to the enterprise/account (or org) managed manifest — the meta-plugin:
 
@@ -32,7 +32,7 @@ This marketplace includes:
      "requiredPlugins": [
        {
          "source": "github",
-         "repo": "newscorp-ghfb/nca-ai-engineering-cdd-registry",
+         "repo": "ephie-w/cdd-plugin",
          "ref": "codex/cdd-marketplace-import"
        }
      ]

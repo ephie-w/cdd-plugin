@@ -2,5 +2,7 @@
   "name": "cdd-core",
   "version": "0.1.0",
   "description": "Discover CDD patterns and reusable components from business requirements.",
+  "author": { "name": "AI Engineering CDD Team" },
+  "license": "MIT",
   "keywords": ["CDD", "capability discovery", "architecture"]
 }

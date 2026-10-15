@@ -13,7 +13,7 @@ const errors = [];
 const kebab = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const sameRepoUrls = new Set([
   "https://github.com/CognitionAI/team-marketplace-template.git",
-  "https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git",
+  "https://github.com/ephie-w/cdd-plugin.git",
 ]);
 
 function fail(msg) {

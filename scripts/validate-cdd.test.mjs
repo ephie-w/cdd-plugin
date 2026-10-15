@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const json = (path) => JSON.parse(read(path));
-const registryUrl = 'https://github.com/newscorp-ghfb/nca-ai-engineering-cdd-registry.git';
+const registryUrl = 'https://github.com/ephie-w/cdd-plugin.git';
 const registryRef = 'codex/cdd-marketplace-import';
 
 test('root plugin declares the CDD marketplace identity', () => {
@@ -119,7 +119,7 @@ test('README explains that the new branch must be pushed before root installatio
   for (const name of ['cdd-core', 'cdd-metadata-enrichment', 'cdd-braintrust-otel']) {
     assert.match(guide, new RegExp(name));
   }
-  assert.match(guide, /nca-ai-engineering-cdd-registry/);
+  assert.match(guide, /ephie-w\/cdd-plugin/);
   assert.match(guide, /codex\/cdd-marketplace-import/);
   assert.match(guide, /push.*before.*install/i);
   assert.doesNotMatch(guide, /example\.invalid/);

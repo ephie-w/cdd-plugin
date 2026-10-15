@@ -2,5 +2,7 @@
   "name": "cdd-metadata-enrichment",
   "version": "0.1.0",
   "description": "Assess fit for the candidate Shared Metadata Enrichment API.",
+  "author": { "name": "AI Engineering CDD Team" },
+  "license": "MIT",
   "keywords": ["CDD", "data", "metadata enrichment"]
 }
