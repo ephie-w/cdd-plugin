@@ -34,6 +34,18 @@ test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.match(catalog, /skill: assess-tracing/);
 });
 
+test('core catalog carries the exact install source for optional CDD plugins', () => {
+  const catalog = read('plugins/cdd-core/catalog/capabilities.yaml');
+  const rootManifest = json('.devin-plugin/plugin.json');
+  const source = catalog.match(/^plugin_source:\n  source: (.+)\n  url: (.+)\n  ref: (.+)$/m);
+  assert.ok(source, 'core catalog must carry its own plugin source');
+  for (const path of ['plugins/cdd-metadata-enrichment', 'plugins/cdd-braintrust-otel']) {
+    assert.ok(rootManifest.optionalPlugins.some((plugin) =>
+      plugin.source === source[1] && plugin.url === source[2] && plugin.ref === source[3] && plugin.path === path
+    ));
+  }
+});
+
 test('discovery fails closed and does not treat optional plugins as installed', () => {
   const skill = read('plugins/cdd-core/skills/discover/SKILL.md');
   assert.match(skill, /catalog\/capabilities\.yaml/);

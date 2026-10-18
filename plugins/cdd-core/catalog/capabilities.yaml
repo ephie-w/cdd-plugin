@@ -1,6 +1,10 @@
 schema_version: '1.0'
 demo_snapshot: true
 source_note: Selected records copied from the AI Engineering CDD Registry for this isolated demo.
+plugin_source:
+  source: git-subdir
+  url: https://github.com/ephie-w/cdd-plugin.git
+  ref: codex/cdd-marketplace-import
 patterns:
   - id: BLUEPRINT-01
     name: RAG application
