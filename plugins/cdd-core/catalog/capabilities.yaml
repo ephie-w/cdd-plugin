@@ -31,8 +31,15 @@ components:
     plugin:
       name: cdd-metadata-enrichment
       marketplace_path: plugins/cdd-metadata-enrichment
-      skill: assess-metadata-enrichment
+      skill: integrate-metadata-enrichment
       local_agent: metadata-fit-reviewer
+    authoritative_sources:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/nca-component-metadata-enrichment-svc
+        authority_for: Onboarding, API behavior, request and response contracts, project configuration, and extractor capabilities.
+      - kind: confluence
+        url: https://newsau.atlassian.net/wiki/spaces/AAS/pages/81516068956/Metadata+Enrichment+SVC
+        authority_for: High-level capability overview only; not onboarding, ownership, or access-request instructions.
     use_when:
       - A project needs reusable structural, semantic, temporal, business, or source metadata before indexing.
     do_not_use_when:

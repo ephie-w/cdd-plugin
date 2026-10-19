@@ -16,7 +16,7 @@ This marketplace includes:
   - Optional plugins (`frontend-standards`, `docs-and-release`)
 - Independent CDD demo plugins:
   - Required `cdd-core` discovers a draft RAG pattern and candidate components from its bundled catalogue.
-  - Optional `cdd-metadata-enrichment` assesses the shared Metadata Enrichment API for pre-indexing document metadata.
+  - Required `cdd-metadata-enrichment` integrates the shared Metadata Enrichment API for pre-indexing document metadata, subject to project configuration and access.
   - Optional `cdd-braintrust-otel` assesses the shared Braintrust OTel trace path; it does not cover OTel Metrics dashboards.
 - Documentation for maintainers:
   - [`docs/add-a-plugin.md`](docs/add-a-plugin.md) — how a team contributes a plugin to this repo.
@@ -39,11 +39,11 @@ This marketplace includes:
    }
    ```
 
-   Once the branch is pushed, required plugins install recursively, so requiring `cdd-marketplace` pulls in `engineering-baseline`, `security-guardrails`, and `cdd-core`. Individual users can additionally install endorsed optional plugins, including the two CDD components. An `optionalPlugins` entry is not an installation.
+   Once the branch is pushed, required plugins install recursively, so requiring `cdd-marketplace` pulls in `engineering-baseline`, `security-guardrails`, `cdd-core`, and `cdd-metadata-enrichment`. Individual users can additionally install endorsed optional plugins such as `cdd-braintrust-otel`. An `optionalPlugins` entry is not an installation.
 
 4. After publishing the referenced branch and configuring the managed manifest, everyone in scope gets required plugins automatically — cloud sessions, and CLI/Desktop users logged into the account.
 
-**Deployment blocker:** the target repository does not yet have the `codex/cdd-marketplace-import` branch. Push this branch before installing or distributing the root meta-plugin; its current `main` branch does not contain these plugin directories. The CDD content is an assessment-only demo: its RAG pattern is `draft`, its components are `candidate`, and no MCP connection or service integration is configured.
+**Distribution precondition:** verify that `codex/cdd-marketplace-import` is published in the target repository and accessible through Devin's Git integration; if it is not, push the branch before installing the root meta-plugin. Core discovery still uses a demo catalogue: the RAG pattern is `draft` and the components are `candidate`. The metadata plugin has a caller-side integration workflow, but this marketplace does not deploy the shared service or a project's configuration. Core declares an Atlassian MCP server; reading private Confluence content also requires an authenticated connection.
 
 ## Cloud vs. CLI Support
 
@@ -59,9 +59,11 @@ devin plugins install --local ./plugins/cdd-braintrust-otel
 devin plugins list
 ```
 
-Install only the optional components needed for a request. Core discovery identifies a candidate; its skill checks installation before invoking that component's assessment skill. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin cannot resolve its CDD dependencies until the referenced branch is pushed.
+Install only the optional components needed for a request. Core discovery identifies a candidate and checks whether its component skill is active before invocation. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin cannot resolve its CDD dependencies until the referenced branch is pushed.
 
-If an optional component plugin is not installed, `cdd-core:discover` returns its exact `git-subdir` source (URL, branch ref, and subdirectory path) plus the skill to run after installation. A catalogue match is not an assessment by the component skill. Installing through plugin management may not expose a new skill to the current Cloud session; verify availability and start a new session when needed. `cdd-core` does not silently install optional plugins.
+If a component plugin is not active in the current session, `cdd-core:discover` returns its exact `git-subdir` source (URL, branch ref, and subdirectory path) plus the skill to run after installation. A catalogue match is not an assessment by the component skill. Installing through plugin management may not expose a new skill to the current Cloud session; verify availability and start a new session when needed. `cdd-core` does not silently install plugins.
+
+For metadata discovery, core's catalogue points to the service GitHub repository for technical capabilities and `docs/PROJECT_ONBOARDING.md` for onboarding. The linked Confluence page is a capability overview, not a source for ownership or access-request steps. Core declares the Atlassian MCP in `plugins/cdd-core/.mcp.json`; a Cloud connection or CLI login is still required to read private Confluence content. Missing access leaves the relevant claim unverified. Core does not treat source reading as execution of `/cdd-metadata-enrichment:integrate-metadata-enrichment`.
 
 ## Claude plugin compatibility
 

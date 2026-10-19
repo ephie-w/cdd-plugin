@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -30,17 +30,30 @@ test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.match(catalog, /category: observe/);
   assert.match(catalog, /marketplace_path: plugins\/cdd-metadata-enrichment/);
   assert.match(catalog, /marketplace_path: plugins\/cdd-braintrust-otel/);
-  assert.match(catalog, /skill: assess-metadata-enrichment/);
+  assert.match(catalog, /https:\/\/github\.com\/newscorp-ghfb\/nca-component-metadata-enrichment-svc/);
+  assert.match(catalog, /https:\/\/newsau\.atlassian\.net\/wiki\/spaces\/AAS\/pages\/81516068956/);
+  assert.match(catalog, /skill: integrate-metadata-enrichment/);
   assert.match(catalog, /skill: assess-tracing/);
 });
 
-test('core catalog carries the exact install source for optional CDD plugins', () => {
+test('core exposes the Atlassian MCP for the metadata capability overview', () => {
+  assert.ok(existsSync(join(root, 'plugins/cdd-core/.mcp.json')), 'core must provide the Atlassian MCP');
+  const config = json('plugins/cdd-core/.mcp.json');
+  assert.deepEqual(config.mcpServers.atlassian, {
+    url: 'https://mcp.atlassian.com/v1/mcp',
+    transport: 'http',
+  });
+  assert.doesNotMatch(JSON.stringify(config), /clientSecret|apiToken|password/i);
+});
+
+test('core catalog carries the exact install source for CDD component plugins', () => {
   const catalog = read('plugins/cdd-core/catalog/capabilities.yaml');
   const rootManifest = json('.devin-plugin/plugin.json');
   const source = catalog.match(/^plugin_source:\n  source: (.+)\n  url: (.+)\n  ref: (.+)$/m);
   assert.ok(source, 'core catalog must carry its own plugin source');
   for (const path of ['plugins/cdd-metadata-enrichment', 'plugins/cdd-braintrust-otel']) {
-    assert.ok(rootManifest.optionalPlugins.some((plugin) =>
+    const declarations = [...rootManifest.requiredPlugins, ...rootManifest.optionalPlugins];
+    assert.ok(declarations.some((plugin) =>
       plugin.source === source[1] && plugin.url === source[2] && plugin.ref === source[3] && plugin.path === path
     ));
   }
@@ -56,20 +69,20 @@ test('discovery fails closed and does not treat optional plugins as installed', 
 });
 
 test('component manifests and local agent profiles match flat names', () => {
-  for (const [plugin, skill, agent, category] of [
-    ['cdd-metadata-enrichment', 'assess-metadata-enrichment', 'metadata-fit-reviewer', 'data'],
-    ['cdd-braintrust-otel', 'assess-tracing', 'tracing-fit-reviewer', 'observe'],
+  for (const [plugin, skill, agent, category, agentMarker] of [
+    ['cdd-metadata-enrichment', 'integrate-metadata-enrichment', 'metadata-fit-reviewer', 'data', 'Metadata Enrichment fit reviewer'],
+    ['cdd-braintrust-otel', 'assess-tracing', 'tracing-fit-reviewer', 'observe', 'name: tracing-fit-reviewer'],
   ]) {
     const manifest = json(`plugins/${plugin}/.devin-plugin/plugin.json`);
     assert.equal(manifest.name, plugin);
     assert.ok(manifest.keywords.includes(category));
     assert.match(read(`plugins/${plugin}/skills/${skill}/SKILL.md`), new RegExp(`name: ${skill}`));
-    assert.match(read(`plugins/${plugin}/agents/${agent}/AGENT.md`), new RegExp(`name: ${agent}`));
+    assert.ok(read(`plugins/${plugin}/agents/${agent}/AGENT.md`).includes(agentMarker));
   }
 });
 
 test('component advice remains candidate-only and trace-only where relevant', () => {
-  assert.match(read('plugins/cdd-metadata-enrichment/skills/assess-metadata-enrichment/SKILL.md'), /candidate/);
+  assert.match(read('plugins/cdd-metadata-enrichment/agents/metadata-fit-reviewer/AGENT.md'), /candidate as production-approved/);
   const tracing = read('plugins/cdd-braintrust-otel/skills/assess-tracing/SKILL.md');
   assert.match(tracing, /candidate/);
   assert.match(tracing, /not OTel Metrics/);
@@ -80,7 +93,7 @@ test('root manifest wires CDD plugins to the requested repository branch', () =>
   const rootManifest = json('.devin-plugin/plugin.json');
   const has = (list, path) => list.some((ref) => ref?.source === 'git-subdir' && ref.url === registryUrl && ref.path === path && ref.ref === registryRef);
   assert.ok(has(rootManifest.requiredPlugins, 'plugins/cdd-core'));
-  assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-metadata-enrichment'));
+  assert.ok(has(rootManifest.requiredPlugins, 'plugins/cdd-metadata-enrichment'));
   assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-braintrust-otel'));
   assert.ok(rootManifest.requiredPlugins.some((ref) => ref.path === 'plugins/engineering-baseline'));
   assert.ok(rootManifest.optionalPlugins.some((ref) => ref.path === 'plugins/frontend-standards'));
