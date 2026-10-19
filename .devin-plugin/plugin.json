@@ -22,6 +22,12 @@
       "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-core",
       "ref": "codex/cdd-marketplace-import"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
+      "path": "plugins/cdd-metadata-enrichment",
+      "ref": "codex/cdd-marketplace-import"
     }
   ],
 
@@ -40,12 +46,6 @@
       "source": "git-subdir",
       "url": "https://github.com/anthropics/claude-code.git",
       "path": "plugins/frontend-design"
-    },
-    {
-      "source": "git-subdir",
-      "url": "https://github.com/ephie-w/cdd-plugin.git",
-      "path": "plugins/cdd-metadata-enrichment",
-      "ref": "codex/cdd-marketplace-import"
     },
     {
       "source": "git-subdir",
