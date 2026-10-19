@@ -52,6 +52,12 @@
       "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-braintrust-otel",
       "ref": "codex/cdd-marketplace-import"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
+      "path": "plugins/cdd-okta-bff-auth",
+      "ref": "codex/cdd-marketplace-import"
     }
   ],
 

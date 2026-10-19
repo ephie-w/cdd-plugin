@@ -18,6 +18,7 @@ patterns:
       optional:
         - shared-metadata-enrichment-api
         - shared-braintrust-otel-pipeline
+        - okta-bff-auth
     known_gaps:
       - No approved multi-format document ingestion Component is registered.
       - No approved permission-aware retrieval Component is registered.
@@ -59,3 +60,22 @@ components:
     do_not_use_when:
       - The service needs OTel Metrics; the current shared path supports traces only.
       - The service has not received a Braintrust routing project identifier.
+  - id: okta-bff-auth
+    name: Okta BFF Authentication
+    summary: Express router and React hook for Okta sign-in with PKCE, server-side tokens, HttpOnly session cookies, and refresh-token rotation.
+    status: candidate
+    category: identity
+    plugin:
+      name: cdd-okta-bff-auth
+      marketplace_path: plugins/cdd-okta-bff-auth
+      skill: integrate-okta-bff-auth
+      local_agent: okta-bff-fit-reviewer
+    authoritative_sources:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/dev/apps/frontend/packages/okta-bff-auth
+        authority_for: Component API, security behaviour, session-store contract, and tests; NewtonGPT is the reference consumer.
+    use_when:
+      - A same-origin web app with an Express server needs corporate Okta sign-in without exposing tokens to the browser.
+    do_not_use_when:
+      - The client has no server (pure SPA or mobile) or the identity provider is not Okta.
+      - The app runs more than one instance and no shared, encrypted session store is provided.
