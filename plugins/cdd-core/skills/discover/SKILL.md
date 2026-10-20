@@ -1,6 +1,6 @@
 ---
 name: discover
-description: Use when a business or engineering request might reuse a CDD pattern, component, standard, service, or domain plugin, including document-grounded RAG, data ingestion, metadata enrichment, and AI observability.
+description: Use when a business or engineering request might reuse a CDD pattern, component, standard, service, or domain plugin, including document-grounded RAG, data ingestion, metadata enrichment, AI observability, and CI pull-request validation.
 ---
 
 # Discover CDD capabilities

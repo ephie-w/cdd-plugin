@@ -104,3 +104,25 @@ components:
     do_not_use_when:
       - The client has no server (pure SPA or mobile) or the identity provider is not Okta.
       - The app runs more than one instance and no shared, encrypted session store is provided.
+  - id: pr-validation-workflows
+    name: PR validation reusable workflows
+    summary: GitHub Actions reusable workflows for Node and Python/uv checks, Semgrep and Checkov scans, and a credential-free Terraform plan posted as a sticky PR comment.
+    status: candidate
+    category: ci
+    plugin:
+      name: cdd-pr-validation
+      marketplace_path: plugins/cdd-pr-validation
+      skill: integrate-pr-validation
+      local_agent: pr-validation-fit-reviewer
+    authoritative_sources:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/60f2ce47708fcedeeef2921f02a4f0088d07be34/.github
+        authority_for: Workflow inputs, step behaviour, pinned action versions, and the NewtonGPT caller. The revision is from PR #58, which was not merged when this record was written.
+    use_when:
+      - A GitHub repository needs PR checks for npm or uv projects, Docker builds, security scans, or a Terraform plan preview without giving PR code cloud credentials.
+    do_not_use_when:
+      - The repository does not use GitHub Actions, or uses pnpm, Yarn, Poetry, or plain pip.
+      - The Terraform preview is needed for a non-Google provider or a configuration with provider data sources.
+      - PRs come from forks and the Terraform PR comment is required.
+    known_gaps:
+      - No central workflow repository is registered; adopters copy the files at a pinned revision and own updates.
