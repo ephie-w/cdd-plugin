@@ -1,0 +1,8 @@
+{
+  "name": "cdd-pr-validation",
+  "version": "0.1.0",
+  "description": "Assess fit for and adopt the candidate PR validation reusable workflows (Node, Python/uv, security scans, offline Terraform preview).",
+  "author": { "name": "AI Engineering CDD Team" },
+  "license": "MIT",
+  "keywords": ["CDD", "ci", "GitHub Actions", "reusable workflows", "Terraform"]
+}

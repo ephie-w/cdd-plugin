@@ -58,6 +58,18 @@
       "url": "https://github.com/ephie-w/cdd-plugin.git",
       "path": "plugins/cdd-okta-bff-auth",
       "ref": "codex/cdd-marketplace-import"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
+      "path": "plugins/cdd-protected-source-delivery",
+      "ref": "codex/cdd-marketplace-import"
+    },
+    {
+      "source": "git-subdir",
+      "url": "https://github.com/ephie-w/cdd-plugin.git",
+      "path": "plugins/cdd-pr-validation",
+      "ref": "codex/cdd-marketplace-import"
     }
   ],
 
