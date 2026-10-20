@@ -26,7 +26,7 @@ components:
   - id: shared-metadata-enrichment-api
     name: Shared Metadata Enrichment API
     summary: Shared Cloud Run HTTP service that enriches documents with configured metadata.
-    status: candidate
+    status: approved
     category: data
     plugin:
       name: cdd-metadata-enrichment

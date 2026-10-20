@@ -1,79 +1,77 @@
 ---
 name: integrate-metadata-enrichment
-description: Use when evaluating or integrating the shared Metadata Enrichment Service into a caller's ingestion or indexing pipeline, including entity extraction, classification, sentiment, structured-field mapping, and project configuration proposals.
+description: Use when a project needs to call the shared Metadata Enrichment API for entity extraction, classification, sentiment, or other configured document metadata.
 ---
 
 # Integrate Metadata Enrichment
 
-Integrate a caller with the existing HTTP service. The caller prepares text and persists validated metadata; the service performs configured extraction. Use the caller's language and conventions; use Python for a standalone client when no runtime has been selected.
+Guide the caller through identity, access, project configuration, and an authenticated API request. Reuse information and authorization already provided.
 
-## Scope and sources
+## 1. Confirm the endpoint and caller
 
-Inspect the caller before changing it. Do not modify the service repository, publish service configuration, deploy services, reload or clear service caches, or change IAM. Configuration and prompt files produced by this skill are proposals for the Metadata team. Do not expose credentials or add document-body logging. Use synthetic, non-sensitive content for probes: the current service logs truncated input, structured fields, and output previews without redaction.
+Identify the target environment, Cloud Run service URL, GCP project, region, service name, and Metadata project key. The Metadata project key selects extraction configuration; it is distinct from the GCP project.
 
-Technical authority is the [service repository](https://github.com/newscorp-ghfb/nca-component-metadata-enrichment-svc). Read relevant source at the available checkout/revision before relying on it; record that revision and distinguish local source from deployed behavior. Read these paths as needed:
+The caller can use a Service Account (SA) or a personal Google account. For an application, use its runtime SA; if none exists, guide the user to request one through their team's access process. For a personal call, use the approved personal account.
 
-- API: `services/metadata_enrichment_api/app.py` and its `configuration.py`.
-- Field contracts: `services/metadata_enrichment/schema.py`, `execution_plan.py`, `orchestrator.py`, `normalizer.py`, and relevant `extractors/` implementations.
-- Project behavior: `live/<project>/config.yaml` and its Python prompt module.
-- Configuration loading: `services/common/config_registry.py`.
-- Onboarding and context: `docs/PROJECT_ONBOARDING.md` and `docs/metadata-enrichment-service-technical-documentation.md`.
-- IAM and runtime defaults: `modules/metadata_enrichment_api/`; these do not prove live settings.
+## 2. Request Invoker access
 
-Use the [Confluence page](https://newsau.atlassian.net/wiki/spaces/AAS/pages/81516068956/Metadata+Enrichment+SVC) only for a high-level capability overview. Read `docs/PROJECT_ONBOARDING.md` in the service repository for onboarding; verify ownership, access requests, and operational processes only where a current authoritative source explicitly documents them. Do not infer those processes from the Confluence overview. Report source conflicts. If a required source is unavailable, report its exact URL/path and needed information; request access or an excerpt before depending on that information. Continue independent work with accessible sources.
+Ask the service owner or platform team to grant the actual caller access:
 
-Read [the runtime contract](references/runtime-contract.md) before designing requests, validation, or mappings. It is a source-checked snapshot; recheck relevant implementation when the service changes. No separate client, test, or verification scripts are bundled or assumed.
+| Item | Required value |
+|---|---|
+| Principal | `serviceAccount:<sa-email>` or `user:<google-account-email>` |
+| Role | `roles/run.invoker` |
+| Permission included | `run.routes.invoke` |
+| Resource | The target Metadata Cloud Run service |
 
-## Workflow
+Provide the principal, environment, GCP project, region, and service name in the access request. Confirm access is granted; do not infer it from an SA's existence or a successful login. Do not change IAM yourself.
 
-### 1. Establish the integration boundary
+## 3. Confirm the Metadata project
 
-Inspect existing HTTP/authentication, configuration, logging, pipeline, storage, testing, retries/dead-letter, and telemetry conventions. For a new caller, establish the runtime, intended input/output adapter, and future call site without requiring a package or packaging tool.
+Use an existing deployed project configuration when it meets the caller's needs. Otherwise, give the Metadata team the project key, desired output fields, and mappings from source data to `structured_fields`, and request configuration deployment. Include prompt requirements for custom LLM fields. File creation alone does not mean configuration is deployed.
 
-Identify the environment, endpoint, caller identity, project key, data sensitivity, owners, text preparation, and metadata destination. Map caller fields to `doc_id`, `text`, and `structured_fields`; prefer enrichment after parsing and before indexing. Present the insertion point or standalone scaffold boundary and mappings. Obtain approval before proceeding to project proposals or caller edits; reuse approval already given in the conversation.
+Read [configuration proposals](references/configuration-proposals.md) only when preparing a new or changed configuration. Do not deploy the service or publish configuration yourself.
 
-### 2. Prepare the Metadata-team request
+## 4. Authenticate and call
 
-Read [configuration and prompt guidance](references/configuration-proposals.md). Produce `<project>_metadata/config.yaml` containing `metadata_enrichment.schema`, with extractors and capabilities nested under `schema`. Use the current project configuration or the deterministic example in that reference. Generate only the fields/capabilities required by the caller.
+- **Runtime SA:** use the runtime's Google authentication mechanism to obtain an ID token for the target service URL (or its configured custom audience).
+- **Personal account:** use `gcloud auth login <email>` and obtain a token with `gcloud auth print-identity-token --account=<email>`. Google supports this personal CLI token for development/manual verification; use a runtime SA for ongoing application calls.
 
-Include project key, schema name, environments, endpoint, caller identity, owners, field names/types/requiredness, source paths, extractor selection, dependency/prompt bindings, taxonomy, expected volume, latency constraints, and data restrictions in the request. Identify image versus GCS publication requirements and any required prompt release. Do not invent missing ownership or model availability.
+Send the ID token in `Authorization: Bearer <ID_TOKEN>`. An OAuth access token is not a substitute. Do not print tokens or ask the user to send credentials in chat.
 
-For LLM fields, propose prompts from their field contracts, including output keys, shapes, allowed values, missing-value behavior, and supplied dependency metadata. Do not generate LLM prompts for heuristic/NLP/derived fields. A prompt proposal is not a deployed Python module.
+First call `GET <SERVICE_URL>/health` with the same authorization header. Then call:
 
-Confirm with the user that the required project configuration and Python prompts are deployed in the target environment before continuing. If an existing deployed project already meets the contract, record that evidence and avoid proposing a needless replacement.
+```http
+POST <SERVICE_URL>/enrich
+Authorization: Bearer <ID_TOKEN>
+Content-Type: application/json
+```
 
-### 3. Verify access and liveness
+```json
+{
+  "project": "<metadata-project-key>",
+  "documents": [
+    {
+      "doc_id": "article-001",
+      "text": "Acme reported a 12% increase in revenue.",
+      "structured_fields": {
+        "date_live": "2026-10-19T00:00:00Z"
+      }
+    }
+  ]
+}
+```
 
-Use the caller's existing Google identity-token mechanism; for a Python remote client use ADC-backed ID tokens with the service's configured audience, normally its base Cloud Run URL. Refresh tokens through the auth library. OAuth access tokens are not interchangeable with ID tokens. Permit unauthenticated operation only for loopback development in this integration.
+Adapt `structured_fields` to the deployed mappings. Use non-empty text and string IDs. For verification requests, use synthetic content within the user's authorized scope; the service logs content previews.
 
-Identify the actual request identity and audience without printing tokens. Check `GET /health` first. If permitted, `GET /admin/configs/<project>` can check visible configuration, but does not prove an orchestrator or models can initialize. Do not call admin POST endpoints.
+## 5. Handle the result
 
-Stop live verification on token failure or 401/403; report identity, audience, status, and the access action needed from the platform owner. Handle project/configuration errors using the runtime reference. Obtain explicit permission before a synthetic `POST /enrich` probe, unless already authorized. Health success alone does not verify extraction.
+HTTP 200 can contain `partial_success`. Check each result's status and required metadata before storage or indexing. Results follow input order; duplicate `doc_id` values must not be collapsed into an ID-keyed dictionary. Use the caller's explicit failure-handling policy.
 
-### 4. Implement the caller
+On token failure or 401/403, report the actual identity, audience, and status so access can be checked. For `404 Project not found`, confirm the environment and project key with the Metadata team. Health success alone does not verify extraction.
 
-Adapt the caller's HTTP stack, or create a standalone typed Python client and focused tests. Configure service URL, project, auth audience, timeouts, batch size, and retry limits externally. Caller limits are not server contract limits. Validate string IDs, non-empty text, object-shaped structured fields, and the request envelope locally.
+Read [the runtime contract](references/runtime-contract.md) when implementing a client or diagnosing response/configuration behavior.
 
-Preserve the complete batch envelope and ordered per-record outcomes. Validate response cardinality, positional IDs, counts/status consistency, success metadata objects, and error records as specified in the runtime reference. Never collapse results into a dictionary keyed only by `doc_id`.
+## Sources
 
-Validate required metadata and business types independently of HTTP and record success. Missing LLM output, invalid taxonomies, or incomplete sentiment structures can occur in a nominally successful response. Merge validated metadata at the approved destination without overwriting source fields.
-
-### 5. Apply one explicit failure policy
-
-Follow the caller's established policy or select one with the user; recommend `fail_batch` when there is no convention:
-
-- `fail_batch`: prevent indexing the batch when any record or required output is invalid.
-- `skip_failed`: index valid records only; explicitly record and surface skipped records.
-- `retry_or_dead_letter`: retry eligible failed records within bounded attempts/time, then durably record failures. Preserve input positions/caller correlation across retry subsets.
-
-Malformed envelopes and transport failures fail the request; do not guess which records succeeded. Retry only transient failures under the chosen policy; do not automatically retry 400, missing-project 404, or authentication failures. Retrying may repeat billable model work. Never silently index unenriched documents or retry indefinitely.
-
-For a new caller without a pipeline, leave the approved adapter and future call site explicit rather than inventing application code.
-
-### 6. Verify and report
-
-Test valid success, partial and all-record failure, duplicate IDs with distinct outcomes, missing/extra/reordered results, inconsistent counts/statuses, missing required metadata despite success, HTTP/config/auth errors, timeouts, and the selected policy. Cover only cases relevant to the implemented integration; use synthetic fixtures and mocked HTTP for offline tests.
-
-Run focused tests and relevant caller checks. Run live probes only within the approved environment and authorization. Distinguish offline tests, liveness, configuration visibility, real extraction, and output-quality assessment.
-
-Report the approved boundary; source revision; endpoint/project; mappings; proposal and deployment status; prompt status; identity/audience diagnostics; health/enrichment results; failure policy; changed files and variables; tests; blockers and owners. Mark unperformed checks explicitly.
+Use the [service repository](https://github.com/newscorp-ghfb/nca-component-metadata-enrichment-svc) for API behavior and `docs/PROJECT_ONBOARDING.md` for onboarding. The [Confluence page](https://newsau.atlassian.net/wiki/spaces/AAS/pages/81516068956/Metadata+Enrichment+SVC) provides the capability overview. Check [Cloud Run authentication](https://docs.cloud.google.com/run/docs/authenticating/service-to-service) for IAM and runtime tokens, and [ID token methods](https://docs.cloud.google.com/docs/authentication/get-id-token) for personal calls.
