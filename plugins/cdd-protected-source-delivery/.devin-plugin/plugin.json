@@ -1,0 +1,8 @@
+{
+  "name": "cdd-protected-source-delivery",
+  "version": "0.1.0",
+  "description": "Assess fit for and apply the draft protected source document delivery pattern.",
+  "author": { "name": "AI Engineering CDD Team" },
+  "license": "MIT",
+  "keywords": ["CDD", "security", "pattern", "RAG", "citations", "object-storage"]
+}

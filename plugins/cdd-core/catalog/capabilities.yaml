@@ -19,10 +19,35 @@ patterns:
         - shared-metadata-enrichment-api
         - shared-braintrust-otel-pipeline
         - okta-bff-auth
+    patterns:
+      optional:
+        - PATTERN-01
     known_gaps:
       - No approved multi-format document ingestion Component is registered.
       - No approved permission-aware retrieval Component is registered.
       - No approved Shared RAG Foundation Component is registered.
+  - id: PATTERN-01
+    name: Protected source document delivery
+    summary: Serve cited source files from private object storage through opaque, user-bound references that the authenticated API resolves and streams.
+    status: draft
+    category: security
+    plugin:
+      name: cdd-protected-source-delivery
+      marketplace_path: plugins/cdd-protected-source-delivery
+      skill: apply-protected-source-delivery
+      local_agent: source-delivery-fit-reviewer
+    reference_implementations:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/c783b49be28dfa46454539b6d6432d111c89d787
+        authority_for: One GCP implementation (GCS, Firestore, FastAPI, Express BFF). Evidence of the pattern's behaviour, not a reusable library or a required stack.
+    use_when:
+      - Users must open original files (PDFs or images) cited by an assistant or search UI, and those files must not be publicly reachable.
+    do_not_use_when:
+      - The files are public, or the storage platform already authorises each end user directly (per-user ACLs or delegated access).
+      - Users are entitled to different documents; this pattern checks link ownership, not per-document entitlement.
+    known_gaps:
+      - No reusable Component is registered; implementations are stack-specific.
+      - Per-document entitlement needs a permission-aware retrieval capability, which is not registered.
 components:
   - id: shared-metadata-enrichment-api
     name: Shared Metadata Enrichment API
