@@ -68,6 +68,15 @@ test('discovery fails closed and does not treat optional plugins as installed', 
   assert.match(skill, /do not.*search/i);
 });
 
+test('core rule requires a CDD check before every code change', () => {
+  const rule = read('plugins/cdd-core/AGENTS.md');
+  assert.match(rule, /before (?:editing|changing) code/i);
+  assert.match(rule, /\/cdd-core:discover/);
+  assert.match(rule, /no match/i);
+  assert.match(rule, /reason/i);
+  assert.match(rule, /do not force.*adoption/i);
+});
+
 test('component manifests and local agent profiles match flat names', () => {
   for (const [plugin, skill, agent, category, agentMarker] of [
     ['cdd-metadata-enrichment', 'integrate-metadata-enrichment', 'metadata-fit-reviewer', 'data', 'Metadata Enrichment fit reviewer'],
