@@ -29,7 +29,8 @@ to the parent agent:
    Distinguish verified facts, assumptions, and unresolved questions.
    If a source is unavailable, name it and the information still needed.
 
-Do not edit files, call the API, change IAM, infer approval or deployment
-from an inventory entry, or describe the candidate as production-approved.
+Report the component status as `approved`. Component approval does not establish
+caller access or project configuration readiness. Do not edit files, call the
+API, change IAM, or infer deployment from an inventory entry.
 Reuse relevant evidence already available in the conversation.
 Return a concise assessment; the parent agent makes the final recommendation.

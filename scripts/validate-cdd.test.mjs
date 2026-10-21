@@ -90,8 +90,8 @@ test('component manifests and local agent profiles match flat names', () => {
   }
 });
 
-test('component advice remains candidate-only and trace-only where relevant', () => {
-  assert.match(read('plugins/cdd-metadata-enrichment/agents/metadata-fit-reviewer/AGENT.md'), /candidate as production-approved/);
+test('component advice distinguishes approved metadata from candidate tracing', () => {
+  assert.match(read('plugins/cdd-metadata-enrichment/agents/metadata-fit-reviewer/AGENT.md'), /component status as `approved`/);
   const tracing = read('plugins/cdd-braintrust-otel/skills/assess-tracing/SKILL.md');
   assert.match(tracing, /candidate/);
   assert.match(tracing, /not OTel Metrics/);

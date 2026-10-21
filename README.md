@@ -1,6 +1,6 @@
 # AI Engineering CDD marketplace
 
-A [Devin](https://docs.devin.ai/cli/extensibility/plugins/overview) meta-plugin for discovering reusable AI Engineering CDD patterns and candidate components, with independently installable component-assessment plugins.
+A [Devin](https://docs.devin.ai/cli/extensibility/plugins/overview) meta-plugin for discovering reusable AI Engineering CDD patterns and components, with independently installable component-assessment plugins.
 
 This branch retains the original example plugins alongside the CDD discovery demo.
 
@@ -15,8 +15,8 @@ This marketplace includes:
   - Required baseline plugins (`engineering-baseline`, `security-guardrails`)
   - Optional plugins (`frontend-standards`, `docs-and-release`)
 - Independent CDD demo plugins:
-  - Required `cdd-core` discovers a draft RAG pattern and candidate components from its bundled catalogue.
-  - Required `cdd-metadata-enrichment` integrates the shared Metadata Enrichment API for pre-indexing document metadata, subject to project configuration and access.
+  - Required `cdd-core` discovers a draft RAG pattern, the approved Metadata Enrichment component, and the candidate Braintrust OTel component from its bundled catalogue.
+  - Required `cdd-metadata-enrichment` integrates the approved shared Metadata Enrichment API for pre-indexing document metadata, subject to project configuration and access.
   - Optional `cdd-braintrust-otel` assesses the shared Braintrust OTel trace path; it does not cover OTel Metrics dashboards.
 - Documentation for maintainers:
   - [`docs/add-a-plugin.md`](docs/add-a-plugin.md) — how a team contributes a plugin to this repo.
@@ -43,7 +43,7 @@ This marketplace includes:
 
 4. After publishing the referenced branch and configuring the managed manifest, everyone in scope gets required plugins automatically — cloud sessions, and CLI/Desktop users logged into the account.
 
-**Distribution precondition:** verify that `codex/cdd-marketplace-import` is published in the target repository and accessible through Devin's Git integration; if it is not, push the branch before installing the root meta-plugin. Core discovery still uses a demo catalogue: the RAG pattern is `draft` and the components are `candidate`. The metadata plugin has a caller-side integration workflow, but this marketplace does not deploy the shared service or a project's configuration. Core declares an Atlassian MCP server; reading private Confluence content also requires an authenticated connection.
+**Distribution precondition:** verify that `codex/cdd-marketplace-import` is published in the target repository and accessible through Devin's Git integration; if it is not, push the branch before installing the root meta-plugin. Core discovery still uses a demo catalogue: the RAG pattern is `draft`, Metadata Enrichment is `approved`, and Braintrust OTel is `candidate`. Component approval does not establish caller access or project configuration readiness. The metadata plugin has a caller-side integration workflow, but this marketplace does not deploy the shared service or a project's configuration. Core declares an Atlassian MCP server; reading private Confluence content also requires an authenticated connection.
 
 ## Cloud vs. CLI Support
 
@@ -59,7 +59,7 @@ devin plugins install --local ./plugins/cdd-braintrust-otel
 devin plugins list
 ```
 
-Install only the optional components needed for a request. Core discovery identifies a candidate and checks whether its component skill is active before invocation. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin cannot resolve its CDD dependencies until the referenced branch is pushed.
+Install only the optional components needed for a request. Core discovery identifies a matching component and checks whether its component skill is active before invocation. Local CLI/Desktop may use the component's read-only reviewer subagent, while Cloud uses the skill directly. The root meta-plugin cannot resolve its CDD dependencies until the referenced branch is pushed.
 
 If a component plugin is not active in the current session, `cdd-core:discover` returns its exact `git-subdir` source (URL, branch ref, and subdirectory path) plus the skill to run after installation. A catalogue match is not an assessment by the component skill. Installing through plugin management may not expose a new skill to the current Cloud session; verify availability and start a new session when needed. `cdd-core` does not silently install plugins.
 
