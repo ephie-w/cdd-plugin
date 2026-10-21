@@ -18,6 +18,9 @@ This marketplace includes:
   - Required `cdd-core` discovers a draft RAG pattern, the approved Metadata Enrichment component, and the candidate Braintrust OTel component from its bundled catalogue.
   - Required `cdd-metadata-enrichment` integrates the approved shared Metadata Enrichment API for pre-indexing document metadata, subject to project configuration and access.
   - Optional `cdd-braintrust-otel` assesses the shared Braintrust OTel trace path; it does not cover OTel Metrics dashboards.
+  - Optional `cdd-okta-bff-auth` integrates the candidate Okta BFF authentication component (Express + React, server-side tokens); its in-memory session store is single-instance only.
+  - Optional `cdd-protected-source-delivery` guides the draft pattern for serving cited files from private storage through user-bound references and the authenticated API; it is a design guide, not a library.
+  - Optional `cdd-pr-validation` adopts the candidate GitHub Actions PR validation workflows (Node, Python/uv, security scans, offline Terraform preview); they are copied at a pinned revision because no central workflow repository exists.
 - Documentation for maintainers:
   - [`docs/add-a-plugin.md`](docs/add-a-plugin.md) — how a team contributes a plugin to this repo.
 
@@ -56,6 +59,9 @@ devin plugins install --local ./plugins/engineering-baseline
 devin plugins install --local ./plugins/cdd-core
 devin plugins install --local ./plugins/cdd-metadata-enrichment
 devin plugins install --local ./plugins/cdd-braintrust-otel
+devin plugins install --local ./plugins/cdd-okta-bff-auth
+devin plugins install --local ./plugins/cdd-protected-source-delivery
+devin plugins install --local ./plugins/cdd-pr-validation
 devin plugins list
 ```
 

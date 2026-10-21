@@ -1,0 +1,8 @@
+{
+  "name": "cdd-okta-bff-auth",
+  "version": "0.1.0",
+  "description": "Assess fit for and integrate the candidate Okta BFF authentication component.",
+  "author": { "name": "AI Engineering CDD Team" },
+  "license": "MIT",
+  "keywords": ["CDD", "identity", "Okta", "BFF", "authentication"]
+}

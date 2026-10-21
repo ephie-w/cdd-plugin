@@ -34,6 +34,18 @@ test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.match(catalog, /https:\/\/newsau\.atlassian\.net\/wiki\/spaces\/AAS\/pages\/81516068956/);
   assert.match(catalog, /skill: integrate-metadata-enrichment/);
   assert.match(catalog, /skill: assess-tracing/);
+  assert.match(catalog, /category: identity/);
+  assert.match(catalog, /marketplace_path: plugins\/cdd-okta-bff-auth/);
+  assert.match(catalog, /skill: integrate-okta-bff-auth/);
+  assert.match(catalog, /ncau-data-ai-newtongpt\/tree\/dev\/apps\/frontend\/packages\/okta-bff-auth/);
+  assert.match(catalog, /id: PLAT-06/);
+  assert.match(catalog, /marketplace_path: plugins\/cdd-protected-source-delivery/);
+  assert.match(catalog, /skill: apply-protected-source-delivery/);
+  assert.match(catalog, /ncau-data-ai-newtongpt\/tree\/[0-9a-f]{40}/);
+  assert.match(catalog, /category: ci/);
+  assert.match(catalog, /marketplace_path: plugins\/cdd-pr-validation/);
+  assert.match(catalog, /skill: integrate-pr-validation/);
+  assert.match(catalog, /ncau-data-ai-newtongpt\/tree\/[0-9a-f]{40}\/\.github/);
 });
 
 test('core exposes the Atlassian MCP for the metadata capability overview', () => {
@@ -51,7 +63,7 @@ test('core catalog carries the exact install source for CDD component plugins', 
   const rootManifest = json('.devin-plugin/plugin.json');
   const source = catalog.match(/^plugin_source:\n  source: (.+)\n  url: (.+)\n  ref: (.+)$/m);
   assert.ok(source, 'core catalog must carry its own plugin source');
-  for (const path of ['plugins/cdd-metadata-enrichment', 'plugins/cdd-braintrust-otel']) {
+  for (const path of ['plugins/cdd-metadata-enrichment', 'plugins/cdd-braintrust-otel', 'plugins/cdd-okta-bff-auth', 'plugins/cdd-protected-source-delivery', 'plugins/cdd-pr-validation']) {
     const declarations = [...rootManifest.requiredPlugins, ...rootManifest.optionalPlugins];
     assert.ok(declarations.some((plugin) =>
       plugin.source === source[1] && plugin.url === source[2] && plugin.ref === source[3] && plugin.path === path
@@ -81,6 +93,9 @@ test('component manifests and local agent profiles match flat names', () => {
   for (const [plugin, skill, agent, category, agentMarker] of [
     ['cdd-metadata-enrichment', 'integrate-metadata-enrichment', 'metadata-fit-reviewer', 'data', 'Metadata Enrichment fit reviewer'],
     ['cdd-braintrust-otel', 'assess-tracing', 'tracing-fit-reviewer', 'observe', 'name: tracing-fit-reviewer'],
+    ['cdd-okta-bff-auth', 'integrate-okta-bff-auth', 'okta-bff-fit-reviewer', 'identity', 'name: okta-bff-fit-reviewer'],
+    ['cdd-protected-source-delivery', 'apply-protected-source-delivery', 'source-delivery-fit-reviewer', 'security', 'name: source-delivery-fit-reviewer'],
+    ['cdd-pr-validation', 'integrate-pr-validation', 'pr-validation-fit-reviewer', 'ci', 'name: pr-validation-fit-reviewer'],
   ]) {
     const manifest = json(`plugins/${plugin}/.devin-plugin/plugin.json`);
     assert.equal(manifest.name, plugin);
@@ -96,6 +111,22 @@ test('component advice distinguishes approved metadata from candidate tracing', 
   assert.match(tracing, /candidate/);
   assert.match(tracing, /not OTel Metrics/);
   assert.match(tracing, /do not connect to Braintrust/i);
+  assert.match(read('plugins/cdd-okta-bff-auth/agents/okta-bff-fit-reviewer/AGENT.md'), /candidate as production-approved/);
+  const okta = read('plugins/cdd-okta-bff-auth/skills/integrate-okta-bff-auth/SKILL.md');
+  assert.match(okta, /`candidate`/);
+  assert.match(okta, /does not\*\* validate token signatures/);
+  assert.match(okta, /Do not create or modify Okta applications/);
+  assert.match(read('plugins/cdd-protected-source-delivery/agents/source-delivery-fit-reviewer/AGENT.md'), /draft pattern as production-approved/);
+  const source = read('plugins/cdd-protected-source-delivery/skills/apply-protected-source-delivery/SKILL.md');
+  assert.match(source, /`draft`/);
+  assert.match(source, /not per-document entitlement/);
+  assert.match(source, /Do not change buckets, IAM/);
+  assert.match(read('plugins/cdd-pr-validation/agents/pr-validation-fit-reviewer/AGENT.md'), /candidate as production-approved/);
+  const prValidation = read('plugins/cdd-pr-validation/skills/integrate-pr-validation/SKILL.md');
+  assert.match(prValidation, /`candidate`/);
+  assert.match(prValidation, /no provider data sources/);
+  assert.match(prValidation, /Do not change branch protection/);
+  assert.match(prValidation, /secrets: inherit/);
 });
 
 test('root manifest wires CDD plugins to the requested repository branch', () => {
@@ -104,6 +135,9 @@ test('root manifest wires CDD plugins to the requested repository branch', () =>
   assert.ok(has(rootManifest.requiredPlugins, 'plugins/cdd-core'));
   assert.ok(has(rootManifest.requiredPlugins, 'plugins/cdd-metadata-enrichment'));
   assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-braintrust-otel'));
+  assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-okta-bff-auth'));
+  assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-protected-source-delivery'));
+  assert.ok(has(rootManifest.optionalPlugins, 'plugins/cdd-pr-validation'));
   assert.ok(rootManifest.requiredPlugins.some((ref) => ref.path === 'plugins/engineering-baseline'));
   assert.ok(rootManifest.optionalPlugins.some((ref) => ref.path === 'plugins/frontend-standards'));
   assert.ok(rootManifest.optionalPlugins.some((ref) => ref.url === 'https://github.com/anthropics/claude-code.git'));
@@ -150,7 +184,7 @@ test('validator rejects uploaded-bundle-style relative references', () => {
 
 test('README explains that the new branch must be pushed before root installation', () => {
   const guide = read('README.md');
-  for (const name of ['cdd-core', 'cdd-metadata-enrichment', 'cdd-braintrust-otel']) {
+  for (const name of ['cdd-core', 'cdd-metadata-enrichment', 'cdd-braintrust-otel', 'cdd-okta-bff-auth', 'cdd-protected-source-delivery', 'cdd-pr-validation']) {
     assert.match(guide, new RegExp(name));
   }
   assert.match(guide, /ephie-w\/cdd-plugin/);

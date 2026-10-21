@@ -18,10 +18,36 @@ patterns:
       optional:
         - shared-metadata-enrichment-api
         - shared-braintrust-otel-pipeline
+        - okta-bff-auth
+    patterns:
+      optional:
+        - PLAT-06
     known_gaps:
       - No approved multi-format document ingestion Component is registered.
       - No approved permission-aware retrieval Component is registered.
       - No approved Shared RAG Foundation Component is registered.
+  - id: PLAT-06
+    name: Protected source document delivery
+    summary: Serve cited source files from private object storage through opaque, user-bound references that the authenticated API resolves and streams.
+    status: draft
+    category: security
+    plugin:
+      name: cdd-protected-source-delivery
+      marketplace_path: plugins/cdd-protected-source-delivery
+      skill: apply-protected-source-delivery
+      local_agent: source-delivery-fit-reviewer
+    reference_implementations:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/c783b49be28dfa46454539b6d6432d111c89d787
+        authority_for: One GCP implementation (GCS, Firestore, FastAPI, Express BFF). Evidence of the pattern's behaviour, not a reusable library or a required stack.
+    use_when:
+      - Users must open original files (PDFs or images) cited by an assistant or search UI, and those files must not be publicly reachable.
+    do_not_use_when:
+      - The files are public, or the storage platform already authorises each end user directly (per-user ACLs or delegated access).
+      - Users are entitled to different documents; this pattern checks link ownership, not per-document entitlement.
+    known_gaps:
+      - No reusable Component is registered; implementations are stack-specific.
+      - Per-document entitlement needs a permission-aware retrieval capability, which is not registered.
 components:
   - id: shared-metadata-enrichment-api
     name: Shared Metadata Enrichment API
@@ -59,3 +85,44 @@ components:
     do_not_use_when:
       - The service needs OTel Metrics; the current shared path supports traces only.
       - The service has not received a Braintrust routing project identifier.
+  - id: okta-bff-auth
+    name: Okta BFF Authentication
+    summary: Express router and React hook for Okta sign-in with PKCE, server-side tokens, HttpOnly session cookies, and refresh-token rotation.
+    status: candidate
+    category: identity
+    plugin:
+      name: cdd-okta-bff-auth
+      marketplace_path: plugins/cdd-okta-bff-auth
+      skill: integrate-okta-bff-auth
+      local_agent: okta-bff-fit-reviewer
+    authoritative_sources:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/dev/apps/frontend/packages/okta-bff-auth
+        authority_for: Component API, security behaviour, session-store contract, and tests; NewtonGPT is the reference consumer.
+    use_when:
+      - A same-origin web app with an Express server needs corporate Okta sign-in without exposing tokens to the browser.
+    do_not_use_when:
+      - The client has no server (pure SPA or mobile) or the identity provider is not Okta.
+      - The app runs more than one instance and no shared, encrypted session store is provided.
+  - id: pr-validation-workflows
+    name: PR validation reusable workflows
+    summary: GitHub Actions reusable workflows for Node and Python/uv checks, Semgrep and Checkov scans, and a credential-free Terraform plan posted as a sticky PR comment.
+    status: candidate
+    category: ci
+    plugin:
+      name: cdd-pr-validation
+      marketplace_path: plugins/cdd-pr-validation
+      skill: integrate-pr-validation
+      local_agent: pr-validation-fit-reviewer
+    authoritative_sources:
+      - kind: github
+        url: https://github.com/newscorp-ghfb/ncau-data-ai-newtongpt/tree/60f2ce47708fcedeeef2921f02a4f0088d07be34/.github
+        authority_for: Workflow inputs, step behaviour, pinned action versions, and the NewtonGPT caller. The revision is from PR #58, which was not merged when this record was written.
+    use_when:
+      - A GitHub repository needs PR checks for npm or uv projects, Docker builds, security scans, or a Terraform plan preview without giving PR code cloud credentials.
+    do_not_use_when:
+      - The repository does not use GitHub Actions, or uses pnpm, Yarn, Poetry, or plain pip.
+      - The Terraform preview is needed for a non-Google provider or a configuration with provider data sources.
+      - PRs come from forks and the Terraform PR comment is required.
+    known_gaps:
+      - No central workflow repository is registered; adopters copy the files at a pinned revision and own updates.
