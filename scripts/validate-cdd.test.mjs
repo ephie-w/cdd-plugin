@@ -38,7 +38,7 @@ test('core packages the CDD snapshot and uses flat plugin paths', () => {
   assert.match(catalog, /marketplace_path: plugins\/cdd-okta-bff-auth/);
   assert.match(catalog, /skill: integrate-okta-bff-auth/);
   assert.match(catalog, /ncau-data-ai-newtongpt\/tree\/dev\/apps\/frontend\/packages\/okta-bff-auth/);
-  assert.match(catalog, /id: RAG-05/);
+  assert.match(catalog, /id: PLAT-06/);
   assert.match(catalog, /marketplace_path: plugins\/cdd-protected-source-delivery/);
   assert.match(catalog, /skill: apply-protected-source-delivery/);
   assert.match(catalog, /ncau-data-ai-newtongpt\/tree\/[0-9a-f]{40}/);

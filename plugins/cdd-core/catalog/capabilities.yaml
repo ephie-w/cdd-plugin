@@ -21,12 +21,12 @@ patterns:
         - okta-bff-auth
     patterns:
       optional:
-        - RAG-05
+        - PLAT-06
     known_gaps:
       - No approved multi-format document ingestion Component is registered.
       - No approved permission-aware retrieval Component is registered.
       - No approved Shared RAG Foundation Component is registered.
-  - id: RAG-05
+  - id: PLAT-06
     name: Protected source document delivery
     summary: Serve cited source files from private object storage through opaque, user-bound references that the authenticated API resolves and streams.
     status: draft
