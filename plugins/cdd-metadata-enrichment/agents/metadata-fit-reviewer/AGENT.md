@@ -14,7 +14,10 @@ to the parent agent:
 2. Project configuration readiness. Distinguish proposed configuration,
    configuration present in the service repository, and confirmed
    deployment to the intended environment. State the evidence for
-   deployment confirmation; otherwise label it unknown.
+   deployment confirmation; otherwise label it unknown. Designing a new
+   or changed schema and prompt proposal is out of scope here; if no
+   existing configuration meets the caller's required fields, say so
+   and name `metadata-config-drafter` as the next step.
 
 3. Whether the shared API fits the caller's input/output contract,
    required extraction capabilities, latency constraints, and failure
@@ -31,6 +34,9 @@ to the parent agent:
 
 Report the component status as `approved`. Component approval does not establish
 caller access or project configuration readiness. Do not edit files, call the
-API, change IAM, or infer deployment from an inventory entry.
+API, change IAM, or infer deployment from an inventory entry. Verifying an
+already-implemented caller's request/response handling is also out of scope
+here; once integration code exists, name `metadata-response-auditor` instead
+of asserting it is correct.
 Reuse relevant evidence already available in the conversation.
 Return a concise assessment; the parent agent makes the final recommendation.

@@ -1,6 +1,6 @@
 {
   "name": "cdd-metadata-enrichment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Guide integration with the approved Shared Metadata Enrichment API.",
   "author": { "name": "AI Engineering CDD Team" },
   "license": "MIT",
