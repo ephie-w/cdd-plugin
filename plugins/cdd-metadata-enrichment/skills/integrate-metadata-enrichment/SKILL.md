@@ -30,7 +30,7 @@ Provide the principal, environment, GCP project, region, and service name in the
 
 Use an existing deployed project configuration when it meets the caller's needs. Otherwise, give the Metadata team the project key, desired output fields, and mappings from source data to `structured_fields`, and request configuration deployment. Include prompt requirements for custom LLM fields. File creation alone does not mean configuration is deployed.
 
-Read [configuration proposals](references/configuration-proposals.md) only when preparing a new or changed configuration. Do not deploy the service or publish configuration yourself.
+In CLI/Desktop, delegate drafting to the `metadata-config-drafter` agent once no existing configuration fits — it reads [configuration proposals](references/configuration-proposals.md) and the target project's extractor/prompt source, and returns the schema, prompt specification, and `metadata-team-request.md` handoff draft without deploying anything. In Cloud, read that reference directly instead; custom subagents are not available there. Do not deploy the service or publish configuration yourself.
 
 ## 4. Authenticate and call
 
@@ -70,7 +70,7 @@ HTTP 200 can contain `partial_success`. Check each result's status and required 
 
 On token failure or 401/403, report the actual identity, audience, and status so access can be checked. For `404 Project not found`, confirm the environment and project key with the Metadata team. Health success alone does not verify extraction.
 
-Read [the runtime contract](references/runtime-contract.md) when implementing a client or diagnosing response/configuration behavior.
+Read [the runtime contract](references/runtime-contract.md) when implementing a client or diagnosing response/configuration behavior. In CLI/Desktop, once caller code calls the API and handles results, delegate to the `metadata-response-auditor` agent to check the request shape and result-handling logic against that contract before results reach storage or indexing. In Cloud, apply the reference directly.
 
 ## Sources
 
