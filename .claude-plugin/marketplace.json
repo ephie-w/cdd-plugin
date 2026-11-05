@@ -1,0 +1,61 @@
+{
+  "name": "cdd-marketplace",
+  "owner": {
+    "name": "AI Engineering CDD Team"
+  },
+  "metadata": {
+    "description": "CDD plugins for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "cdd-braintrust-otel",
+      "source": "./plugins/cdd-braintrust-otel",
+      "description": "Assess fit for the candidate Shared Braintrust OTel trace pipeline."
+    },
+    {
+      "name": "cdd-core",
+      "source": "./plugins/cdd-core",
+      "description": "Discover CDD patterns and reusable components from business requirements."
+    },
+    {
+      "name": "cdd-metadata-enrichment",
+      "source": "./plugins/cdd-metadata-enrichment",
+      "description": "Guide integration with the approved Shared Metadata Enrichment API."
+    },
+    {
+      "name": "cdd-okta-bff-auth",
+      "source": "./plugins/cdd-okta-bff-auth",
+      "description": "Assess fit for and integrate the candidate Okta BFF authentication component."
+    },
+    {
+      "name": "cdd-pr-validation",
+      "source": "./plugins/cdd-pr-validation",
+      "description": "Assess fit for and adopt the candidate PR validation reusable workflows (Node, Python/uv, security scans, offline Terraform preview)."
+    },
+    {
+      "name": "cdd-protected-source-delivery",
+      "source": "./plugins/cdd-protected-source-delivery",
+      "description": "Assess fit for and apply the draft protected source document delivery pattern."
+    },
+    {
+      "name": "docs-and-release",
+      "source": "./plugins/docs-and-release",
+      "description": "Documentation and release workflows: release notes and README hygiene skills"
+    },
+    {
+      "name": "engineering-baseline",
+      "source": "./plugins/engineering-baseline",
+      "description": "Baseline engineering standards: code-writing best practices, commit hygiene, and a code-review skill"
+    },
+    {
+      "name": "frontend-standards",
+      "source": "./plugins/frontend-standards",
+      "description": "Frontend standards: React and Next.js best-practice rules plus a design-review skill"
+    },
+    {
+      "name": "security-guardrails",
+      "source": "./plugins/security-guardrails",
+      "description": "Security guardrails: secrets-handling rules, dependency auditing, risky-command hooks, and a security-review subagent"
+    }
+  ]
+}

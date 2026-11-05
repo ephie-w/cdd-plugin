@@ -71,9 +71,34 @@ If a component plugin is not active in the current session, `cdd-core:discover` 
 
 For metadata discovery, core's catalogue points to the service GitHub repository for technical capabilities and `docs/PROJECT_ONBOARDING.md` for onboarding. The linked Confluence page is a capability overview, not a source for ownership or access-request steps. Core declares the Atlassian MCP in `plugins/cdd-core/.mcp.json`; a Cloud connection or CLI login is still required to read private Confluence content. Missing access leaves the relevant claim unverified. Core does not treat source reading as execution of `/cdd-metadata-enrichment:integrate-metadata-enrichment`.
 
-## Claude plugin compatibility
+## Claude Code marketplace
 
-Devin also reads Claude plugin manifests (`.claude-plugin/plugin.json`), so existing Claude Code plugins install as-is. The meta-plugin endorses Anthropic's [`frontend-design`](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design) plugin as a live example.
+This repository also provides a Claude Code marketplace at `.claude-plugin/marketplace.json`. It lists all 10 bundled plugins with relative sources, and each plugin has a Claude manifest alongside its Devin manifest.
+
+Install from the Claude compatibility branch in your terminal:
+
+```bash
+claude plugin marketplace add 'ephie-w/cdd-plugin#codex/claude-marketplace-support'
+claude plugin install cdd-core@cdd-marketplace
+claude plugin install cdd-okta-bff-auth@cdd-marketplace
+claude plugin details cdd-okta-bff-auth
+```
+
+Adding the marketplace registers the catalogue; install each plugin you need separately. Start a new Claude Code session after installation, then invoke `/cdd-core:discover` or `/cdd-okta-bff-auth:integrate-okta-bff-auth`.
+
+To test a local checkout instead:
+
+```bash
+claude plugin validate --strict .
+claude plugin marketplace add .
+claude plugin install cdd-okta-bff-auth@cdd-marketplace
+```
+
+The compatibility configuration was tested with Claude Code 2.1.226: all 10 plugins installed and were enabled in an isolated configuration. Component inventory confirmed the Okta skill and reviewer agent, the security hook and reviewer, and the core Atlassian MCP declaration. Reviewer agents have flat `agents/<name>.md` copies for Claude, while the original Devin agent directories remain. Keep both copies in sync when editing a reviewer. Security uses a separate Claude hooks file with the `Bash` matcher; it only prints a reminder and does not block commands. The core Claude manifest supplies the HTTP MCP server configuration; authenticating to Atlassian is still required.
+
+This is installation compatibility, not a migration of Devin's organization policies: Claude does not apply this repository's Devin `AGENTS.md`, `rules/`, or root `requiredPlugins`/`optionalPlugins`/`forbiddenPlugins` as equivalent Claude policies. The discovery skill still contains Devin-specific installation guidance; in Claude, use `claude plugin install <name>@cdd-marketplace` instead. Real Okta login, private-source access, MCP authentication, model execution of skills, and hook execution were not exercised by the installation test.
+
+Devin also reads Claude plugin manifests (`.claude-plugin/plugin.json`). The Devin meta-plugin endorses Anthropic's [`frontend-design`](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design) plugin as a live example.
 
 ## Validation
 
